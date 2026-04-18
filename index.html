@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Top 50 Greatest Phillies of All Time</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">PHI <span>PHILLIES</span> 50</a>
+      <ul class="nav-links">
+        <li><a href="#leaderboard">Leaderboard</a></li>
+        <li><a href="#diamond">Diamond</a></li>
+        <li><a href="#cards">Players</a></li>
+        <li><a href="#comparison">Compare</a></li>
+        <li><a href="#timeline">Timeline</a></li>
+        <li><a href="#stats">Stats</a></li>
+        <li><a href="#rushmore">Rushmore</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero" class="section-dark">
+    <div id="hero-particles"></div>
+    <div class="hero-content">
+      <h1>The 50 Greatest<br><span class="accent">Phillies</span> of All Time</h1>
+      <p class="hero-subtitle">A data-driven tribute to the legends who defined Philadelphia baseball</p>
+      <div class="hero-counters stagger-children">
+        <div class="hero-counter fade-in-up">
+          <span class="number" data-target="106.9" data-decimal="true">0</span>
+          <span class="label">Highest WAR<br>(Mike Schmidt)</span>
+        </div>
+        <div class="hero-counter fade-in-up">
+          <span class="number" data-target="50">0</span>
+          <span class="label">Legends</span>
+        </div>
+        <div class="hero-counter fade-in-up">
+          <span class="number" data-target="60547">0</span>
+          <span class="label">Combined Games</span>
+        </div>
+      </div>
+      <div class="hero-sponsors fade-in-up">
+        <span class="hero-sponsors-label">Powered by</span>
+        <div class="hero-sponsors-logos">
+          <img src="img/temple-fox.png" alt="Temple University Fox School of Business" class="sponsor-logo">
+          <img src="img/temple-ais.png" alt="Temple AIS" class="sponsor-logo">
+        </div>
+      </div>
+    </div>
+    <div class="scroll-indicator">&#9660;</div>
+  </section>
+
+  <!-- WAR LEADERBOARD -->
+  <section id="leaderboard" class="section-medium">
+    <div class="container">
+      <div class="section-header fade-in-up">
+        <h2>WAR <span class="accent">Leaderboard</span></h2>
+        <p>Wins Above Replacement &mdash; the definitive measure of a player's total contribution</p>
+      </div>
+      <div class="filter-bar" id="leaderboard-filters">
+        <button class="filter-btn active" data-filter="all">All Players</button>
+        <button class="filter-btn" data-filter="position">Position Players</button>
+        <button class="filter-btn" data-filter="pitcher">Pitchers</button>
+      </div>
+      <div class="leaderboard-chart">
+        <canvas id="leaderboard-canvas"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE DIAMOND -->
+  <section id="diamond" class="section-dark">
+    <div class="container">
+      <div class="section-header fade-in-up">
+        <h2>The <span class="accent">All-Time</span> Diamond</h2>
+        <p>Click any position to see the greatest Phillies to play there</p>
+      </div>
+      <div class="diamond-container fade-in-up" id="diamond-field"></div>
+    </div>
+    <div class="diamond-panel" id="diamond-panel">
+      <button class="diamond-panel-close" id="diamond-panel-close">&times;</button>
+      <div id="diamond-panel-content"></div>
+    </div>
+  </section>
+
+  <!-- PLAYER CARDS -->
+  <section id="cards" class="section-light">
+    <div class="container">
+      <div class="section-header fade-in-up">
+        <h2>Player <span class="accent">Profiles</span></h2>
+        <p>Click any card to flip it and explore detailed stats</p>
+      </div>
+      <div class="search-bar">
+        <input type="text" class="search-input" id="cards-search" placeholder="Search players...">
+      </div>
+      <div class="filter-bar" id="cards-filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="position">Position Players</button>
+        <button class="filter-btn" data-filter="pitcher">Pitchers</button>
+      </div>
+      <div class="cards-grid" id="cards-grid"></div>
+    </div>
+  </section>
+
+  <!-- HEAD-TO-HEAD COMPARISON -->
+  <section id="comparison" class="section-medium">
+    <div class="container">
+      <div class="section-header fade-in-up">
+        <h2>Head-to-<span class="accent">Head</span></h2>
+        <p>Pick any two legends and compare them stat by stat</p>
+      </div>
+      <div class="comparison-selectors">
+        <select class="comparison-select" id="compare-a">
+          <option value="">Select Player A</option>
+        </select>
+        <select class="comparison-select" id="compare-b">
+          <option value="">Select Player B</option>
+        </select>
+      </div>
+      <div id="comparison-result"></div>
+    </div>
+  </section>
+
+  <!-- ERA TIMELINE -->
+  <section id="timeline" class="section-dark">
+    <div class="container">
+      <div class="section-header fade-in-up">
+        <h2>Phillies <span class="accent">Timeline</span></h2>
+        <p>143 years of greatness &mdash; from the 1883 founding to today's stars</p>
+      </div>
+      <div class="filter-bar" id="timeline-filters">
+        <button class="filter-btn active" data-filter="all">All Eras</button>
+        <button class="filter-btn" data-filter="pre1950">Pre-1950</button>
+        <button class="filter-btn" data-filter="50s">50s</button>
+        <button class="filter-btn" data-filter="60s">60s</button>
+        <button class="filter-btn" data-filter="70s">70s</button>
+        <button class="filter-btn" data-filter="80s">80s</button>
+        <button class="filter-btn" data-filter="90s">90s</button>
+        <button class="filter-btn" data-filter="00s">00s</button>
+        <button class="filter-btn" data-filter="10s">10s</button>
+        <button class="filter-btn" data-filter="20s">20s</button>
+      </div>
+      <div class="timeline-wrapper">
+        <div class="timeline-container" id="timeline-container"></div>
+      </div>
+    </div>
+    <div class="timeline-tooltip" id="timeline-tooltip"></div>
+  </section>
+
+  <!-- STATS EXPLORER -->
+  <section id="stats" class="section-light">
+    <div class="container">
+      <div class="section-header fade-in-up">
+        <h2>Stats <span class="accent">Explorer</span></h2>
+        <p>Sort and search through every stat &mdash; click any column header to rank</p>
+      </div>
+      <div class="search-bar">
+        <input type="text" class="search-input" id="stats-search" placeholder="Search players...">
+      </div>
+      <div class="filter-bar" id="stats-filters">
+        <button class="filter-btn active" data-filter="position">Position Players</button>
+        <button class="filter-btn" data-filter="pitcher">Pitchers</button>
+      </div>
+      <div class="stats-table-wrapper fade-in-up">
+        <table class="stats-table" id="stats-table"></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOUNT RUSHMORE -->
+  <section id="rushmore" class="section-dark">
+    <div class="container">
+      <div class="section-header fade-in-up">
+        <h2>Build Your Phillies<br><span class="accent">Mount Rushmore</span></h2>
+        <p>Pick the 4 greatest Phillies of all time &mdash; share your picks with the world</p>
+      </div>
+      <div class="rushmore-container fade-in-up">
+        <div class="rushmore-slots" id="rushmore-slots"></div>
+        <div class="rushmore-actions">
+          <button class="btn btn-primary" id="rushmore-share">Share Your Picks</button>
+          <button class="btn btn-secondary" id="rushmore-reset">Reset</button>
+        </div>
+      </div>
+    </div>
+    <div class="rushmore-picker" id="rushmore-picker">
+      <div class="rushmore-picker-inner">
+        <h3>Choose a Legend</h3>
+        <input type="text" class="rushmore-picker-search" id="rushmore-picker-search" placeholder="Search...">
+        <div class="rushmore-picker-list" id="rushmore-picker-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>Data from Baseball-Reference.com (bWAR) | Through 2025 season</p>
+    <p>Built with <span class="heart">&hearts;</span> for the Phaithful</p>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

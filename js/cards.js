@@ -1,0 +1,159 @@
+import { allPlayers, positionPlayers, pitchers, getHeadshotUrl } from './data.js';
+import { createPlayerImg, normalizeStats, formatStat } from './utils.js';
+
+const positionStatKeys = ['avg', 'obp', 'slg', 'hr', 'sb'];
+const positionStatLabels = ['AVG', 'OBP', 'SLG', 'HR', 'Speed'];
+const pitcherStatKeys = ['era', 'so', 'ip', 'whip', 'w'];
+const pitcherStatLabels = ['ERA', 'K', 'IP', 'WHIP', 'Wins'];
+
+const normPosition = normalizeStats(positionPlayers, positionStatKeys);
+const normPitcher = normalizeStats(pitchers, pitcherStatKeys, ['era', 'whip']);
+
+let activeFilter = 'all';
+let searchQuery = '';
+
+export function initCards() {
+  render();
+
+  document.getElementById('cards-filters').addEventListener('click', (e) => {
+    if (!e.target.classList.contains('filter-btn')) return;
+    document.querySelectorAll('#cards-filters .filter-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    activeFilter = e.target.dataset.filter;
+    render();
+  });
+
+  document.getElementById('cards-search').addEventListener('input', (e) => {
+    searchQuery = e.target.value.toLowerCase();
+    render();
+  });
+}
+
+function getFilteredPlayers() {
+  let players = allPlayers;
+  if (activeFilter === 'pitcher') {
+    players = pitchers.map(p => ({ ...p, type: 'pitcher' }));
+  } else if (activeFilter === 'position') {
+    players = positionPlayers.map(p => ({ ...p, type: 'position' }));
+  }
+  if (searchQuery) {
+    players = players.filter(p => p.player.toLowerCase().includes(searchQuery));
+  }
+  return players.sort((a, b) => b.war - a.war);
+}
+
+function render() {
+  const grid = document.getElementById('cards-grid');
+  const players = getFilteredPlayers();
+
+  grid.innerHTML = players.map((p, i) => {
+    const isPitcher = p.type === 'pitcher' || p.era !== undefined;
+    const overallRank = allPlayers.findIndex(ap => ap.player === p.player) + 1;
+
+    return `
+      <div class="card-wrapper fade-in-up">
+        <div class="card" data-index="${i}" data-player="${p.player}">
+          <div class="card-face card-front">
+            <div class="rank-badge ${overallRank <= 5 ? 'top5' : ''}">${overallRank}</div>
+            <div class="type-badge ${isPitcher ? 'pitcher' : 'position'}">${isPitcher ? 'P' : 'POS'}</div>
+            <img class="player-img" src="${p.mlbId ? getHeadshotUrl(p.mlbId) : `data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect fill='%23002D72' width='100' height='100' rx='50'/><text x='50' y='60' text-anchor='middle' fill='white' font-size='32' font-family='sans-serif'>${p.player.split(' ').map(n=>n[0]).join('')}</text></svg>`)}`}" alt="${p.player}" onerror="this.src='data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect fill='%23002D72' width='100' height='100' rx='50'/><text x='50' y='60' text-anchor='middle' fill='white' font-size='32' font-family='sans-serif'>${p.player.split(' ').map(n=>n[0]).join('')}</text></svg>`)}'">
+            <h3>${p.player}</h3>
+            <div class="position-text">${p.position || 'Pitcher'}</div>
+            <div class="years-text">${p.years}</div>
+            <div class="war-display">${p.war}</div>
+            <div class="war-label">WAR</div>
+          </div>
+          <div class="card-face card-back">
+            <h3>${p.player}</h3>
+            <div class="radar-container">
+              <canvas class="radar-canvas" width="220" height="180"></canvas>
+            </div>
+            <div class="stats-grid">
+              ${isPitcher ? `
+                <div class="stat-item"><div class="stat-val">${p.era}</div><div class="stat-key">ERA</div></div>
+                <div class="stat-item"><div class="stat-val">${p.w}-${p.l}</div><div class="stat-key">W-L</div></div>
+                <div class="stat-item"><div class="stat-val">${p.so}</div><div class="stat-key">K</div></div>
+                <div class="stat-item"><div class="stat-val">${p.whip}</div><div class="stat-key">WHIP</div></div>
+                <div class="stat-item"><div class="stat-val">${p.ip}</div><div class="stat-key">IP</div></div>
+                <div class="stat-item"><div class="stat-val">${p.allStar}x</div><div class="stat-key">All-Star</div></div>
+              ` : `
+                <div class="stat-item"><div class="stat-val">${p.avg.toFixed(3).replace(/^0/,'')}</div><div class="stat-key">AVG</div></div>
+                <div class="stat-item"><div class="stat-val">${p.hr}</div><div class="stat-key">HR</div></div>
+                <div class="stat-item"><div class="stat-val">${p.rbi}</div><div class="stat-key">RBI</div></div>
+                <div class="stat-item"><div class="stat-val">${p.obp.toFixed(3).replace(/^0/,'')}</div><div class="stat-key">OBP</div></div>
+                <div class="stat-item"><div class="stat-val">${p.sb}</div><div class="stat-key">SB</div></div>
+                <div class="stat-item"><div class="stat-val">${p.allStar}x</div><div class="stat-key">All-Star</div></div>
+              `}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Stagger animation
+  setTimeout(() => {
+    grid.querySelectorAll('.fade-in-up').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), i * 50);
+    });
+  }, 50);
+
+  // Flip handler
+  grid.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', () => {
+      const wasFlipped = card.classList.contains('flipped');
+      card.classList.toggle('flipped');
+
+      // Lazy init radar chart
+      if (!wasFlipped && !card.dataset.chartInit) {
+        card.dataset.chartInit = 'true';
+        const canvas = card.querySelector('.radar-canvas');
+        const playerName = card.dataset.player;
+        const player = allPlayers.find(p => p.player === playerName) ||
+                       pitchers.find(p => p.player === playerName);
+        if (player && canvas) {
+          createRadarChart(canvas, player);
+        }
+      }
+    });
+  });
+}
+
+function createRadarChart(canvas, player) {
+  const isPitcher = player.era !== undefined && player.type !== 'position';
+  const labels = isPitcher ? pitcherStatLabels : positionStatLabels;
+  const normalizer = isPitcher ? normPitcher : normPosition;
+  const values = normalizer(player);
+
+  new Chart(canvas, {
+    type: 'radar',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: 'rgba(232,24,40,0.2)',
+        borderColor: '#E81828',
+        borderWidth: 2,
+        pointBackgroundColor: '#E81828',
+        pointRadius: 3,
+      }]
+    },
+    options: {
+      responsive: false,
+      animation: { duration: 600 },
+      plugins: { legend: { display: false } },
+      scales: {
+        r: {
+          beginAtZero: true,
+          max: 100,
+          ticks: { display: false, stepSize: 25 },
+          grid: { color: 'rgba(0,45,114,0.15)' },
+          pointLabels: {
+            font: { size: 10, weight: '600' },
+            color: '#002D72'
+          }
+        }
+      }
+    }
+  });
+}

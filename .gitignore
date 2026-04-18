@@ -1,0 +1,13 @@
+# Local Claude settings
+.claude/settings.local.json
+
+# Non-source assets
+*.mp4
+*.xlsx
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+img/temp-*.png
