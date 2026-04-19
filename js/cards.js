@@ -12,6 +12,61 @@ const normPitcher = normalizeStats(pitchers, pitcherStatKeys, ['era', 'whip']);
 let activeFilter = 'all';
 let searchQuery = '';
 
+const TIERS = [
+  { label: 'The Immortals',         subtitle: 'Franchise cornerstones whose names echo forever at Citizens Bank Park' },
+  { label: 'The Legends',           subtitle: 'Elite careers that shaped generations of Phillies baseball' },
+  { label: 'The Greats',            subtitle: 'Stars whose play earned a permanent place in team history' },
+  { label: 'The All-Stars',         subtitle: 'Players who consistently rose to the moment in red pinstripes' },
+  { label: 'The Stalwarts',         subtitle: 'Dependable talents who built the backbone of the franchise' },
+  { label: 'Honorable Mentions',    subtitle: 'Notable contributors to the Phillies legacy' },
+];
+
+function cardHTML(p, i) {
+  const isPitcher = p.type === 'pitcher' || p.era !== undefined;
+  const overallRank = allPlayers.findIndex(ap => ap.player === p.player) + 1;
+  const initialsSVG = `<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect fill='%23002D72' width='100' height='100' rx='50'/><text x='50' y='60' text-anchor='middle' fill='white' font-size='32' font-family='sans-serif'>${p.player.split(' ').map(n=>n[0]).join('')}</text></svg>`;
+  const imgSrc = p.mlbId ? getHeadshotUrl(p.mlbId) : `data:image/svg+xml,${encodeURIComponent(initialsSVG)}`;
+  return `
+    <div class="card-wrapper fade-in-up">
+      <div class="card" data-index="${i}" data-player="${p.player}">
+        <div class="card-face card-front">
+          <div class="rank-badge ${overallRank <= 5 ? 'top5' : ''}">${overallRank}</div>
+          <div class="type-badge ${isPitcher ? 'pitcher' : 'position'}">${isPitcher ? 'P' : 'POS'}</div>
+          <img class="player-img" src="${imgSrc}" alt="${p.player}" onerror="this.src='data:image/svg+xml,${encodeURIComponent(initialsSVG)}'">
+          <h3>${p.player}</h3>
+          <div class="position-text">${p.position || 'Pitcher'}</div>
+          <div class="years-text">${p.years}</div>
+          <div class="war-display">${p.war}</div>
+          <div class="war-label">WAR</div>
+        </div>
+        <div class="card-face card-back">
+          <h3>${p.player}</h3>
+          <div class="radar-container">
+            <canvas class="radar-canvas" width="160" height="110"></canvas>
+          </div>
+          <div class="stats-grid">
+            ${isPitcher ? `
+              <div class="stat-item"><div class="stat-val">${p.era}</div><div class="stat-key">ERA</div></div>
+              <div class="stat-item"><div class="stat-val">${p.w}-${p.l}</div><div class="stat-key">W-L</div></div>
+              <div class="stat-item"><div class="stat-val">${p.so}</div><div class="stat-key">K</div></div>
+              <div class="stat-item"><div class="stat-val">${p.whip}</div><div class="stat-key">WHIP</div></div>
+              <div class="stat-item"><div class="stat-val">${p.ip}</div><div class="stat-key">IP</div></div>
+              <div class="stat-item"><div class="stat-val">${p.allStar}x</div><div class="stat-key">All-Star</div></div>
+            ` : `
+              <div class="stat-item"><div class="stat-val">${p.avg.toFixed(3).replace(/^0/,'')}</div><div class="stat-key">AVG</div></div>
+              <div class="stat-item"><div class="stat-val">${p.hr}</div><div class="stat-key">HR</div></div>
+              <div class="stat-item"><div class="stat-val">${p.rbi}</div><div class="stat-key">RBI</div></div>
+              <div class="stat-item"><div class="stat-val">${p.obp.toFixed(3).replace(/^0/,'')}</div><div class="stat-key">OBP</div></div>
+              <div class="stat-item"><div class="stat-val">${p.sb}</div><div class="stat-key">SB</div></div>
+              <div class="stat-item"><div class="stat-val">${p.allStar}x</div><div class="stat-key">All-Star</div></div>
+            `}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 export function initCards() {
   render();
 
@@ -45,56 +100,52 @@ function getFilteredPlayers() {
 function render() {
   const grid = document.getElementById('cards-grid');
   const players = getFilteredPlayers();
+  const isSearching = searchQuery.length > 0;
 
-  grid.innerHTML = players.map((p, i) => {
-    const isPitcher = p.type === 'pitcher' || p.era !== undefined;
-    const overallRank = allPlayers.findIndex(ap => ap.player === p.player) + 1;
-
-    return `
-      <div class="card-wrapper fade-in-up">
-        <div class="card" data-index="${i}" data-player="${p.player}">
-          <div class="card-face card-front">
-            <div class="rank-badge ${overallRank <= 5 ? 'top5' : ''}">${overallRank}</div>
-            <div class="type-badge ${isPitcher ? 'pitcher' : 'position'}">${isPitcher ? 'P' : 'POS'}</div>
-            <img class="player-img" src="${p.mlbId ? getHeadshotUrl(p.mlbId) : `data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect fill='%23002D72' width='100' height='100' rx='50'/><text x='50' y='60' text-anchor='middle' fill='white' font-size='32' font-family='sans-serif'>${p.player.split(' ').map(n=>n[0]).join('')}</text></svg>`)}`}" alt="${p.player}" onerror="this.src='data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect fill='%23002D72' width='100' height='100' rx='50'/><text x='50' y='60' text-anchor='middle' fill='white' font-size='32' font-family='sans-serif'>${p.player.split(' ').map(n=>n[0]).join('')}</text></svg>`)}'">
-            <h3>${p.player}</h3>
-            <div class="position-text">${p.position || 'Pitcher'}</div>
-            <div class="years-text">${p.years}</div>
-            <div class="war-display">${p.war}</div>
-            <div class="war-label">WAR</div>
-          </div>
-          <div class="card-face card-back">
-            <h3>${p.player}</h3>
-            <div class="radar-container">
-              <canvas class="radar-canvas" width="160" height="110"></canvas>
+  if (isSearching || players.length === 0) {
+    // Flat grid while searching (tiers don't help) or when empty
+    grid.innerHTML = players.length === 0
+      ? `<div class="cards-empty">No players match "<strong>${searchQuery}</strong>"</div>`
+      : `<div class="tier-grid">${players.map((p, i) => cardHTML(p, i)).join('')}</div>`;
+  } else {
+    const chunks = [];
+    for (let i = 0; i < 50 && i < players.length; i += 10) {
+      chunks.push(players.slice(i, i + 10));
+    }
+    if (players.length > 50) chunks.push(players.slice(50));
+    grid.innerHTML = chunks.map((group, tierIdx) => {
+      const start = tierIdx * 10 + 1;
+      const end = start + group.length - 1;
+      const isOverflow = tierIdx >= 5;
+      const rankLabel = isOverflow
+        ? `${start}–${end}`
+        : `${String(start).padStart(2, '0')}–${String(end).padStart(2, '0')}`;
+      const tier = TIERS[Math.min(tierIdx, TIERS.length - 1)];
+      const topWar = group[0]?.war;
+      const lowWar = group[group.length - 1]?.war;
+      const warRange = topWar === lowWar ? `${topWar} WAR` : `${lowWar} – ${topWar} WAR`;
+      return `
+        <section class="tier" data-tier="${tierIdx}">
+          <header class="tier-header">
+            <div class="tier-rank">${rankLabel}</div>
+            <div class="tier-heading">
+              <h3 class="tier-title">${tier.label}</h3>
+              <p class="tier-subtitle">${tier.subtitle}</p>
             </div>
-            <div class="stats-grid">
-              ${isPitcher ? `
-                <div class="stat-item"><div class="stat-val">${p.era}</div><div class="stat-key">ERA</div></div>
-                <div class="stat-item"><div class="stat-val">${p.w}-${p.l}</div><div class="stat-key">W-L</div></div>
-                <div class="stat-item"><div class="stat-val">${p.so}</div><div class="stat-key">K</div></div>
-                <div class="stat-item"><div class="stat-val">${p.whip}</div><div class="stat-key">WHIP</div></div>
-                <div class="stat-item"><div class="stat-val">${p.ip}</div><div class="stat-key">IP</div></div>
-                <div class="stat-item"><div class="stat-val">${p.allStar}x</div><div class="stat-key">All-Star</div></div>
-              ` : `
-                <div class="stat-item"><div class="stat-val">${p.avg.toFixed(3).replace(/^0/,'')}</div><div class="stat-key">AVG</div></div>
-                <div class="stat-item"><div class="stat-val">${p.hr}</div><div class="stat-key">HR</div></div>
-                <div class="stat-item"><div class="stat-val">${p.rbi}</div><div class="stat-key">RBI</div></div>
-                <div class="stat-item"><div class="stat-val">${p.obp.toFixed(3).replace(/^0/,'')}</div><div class="stat-key">OBP</div></div>
-                <div class="stat-item"><div class="stat-val">${p.sb}</div><div class="stat-key">SB</div></div>
-                <div class="stat-item"><div class="stat-val">${p.allStar}x</div><div class="stat-key">All-Star</div></div>
-              `}
-            </div>
+            <div class="tier-meta">${warRange}</div>
+          </header>
+          <div class="tier-grid">
+            ${group.map((p, i) => cardHTML(p, tierIdx * 10 + i)).join('')}
           </div>
-        </div>
-      </div>
-    `;
-  }).join('');
+        </section>
+      `;
+    }).join('');
+  }
 
   // Stagger animation
   setTimeout(() => {
     grid.querySelectorAll('.fade-in-up').forEach((el, i) => {
-      setTimeout(() => el.classList.add('visible'), i * 50);
+      setTimeout(() => el.classList.add('visible'), i * 30);
     });
   }, 50);
 
