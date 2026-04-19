@@ -8,9 +8,9 @@ const TOTAL_YEARS = END_YEAR - START_YEAR + 1;
 const milestones = [
   { year: 1915, label: "1915 NL Pennant" },
   { year: 1950, label: "1950 Whiz Kids" },
-  { year: 1980, label: "1980 World Series Champions" },
+  { year: 1980, label: "1980 World Series", championship: true },
   { year: 1993, label: "1993 NL Pennant" },
-  { year: 2008, label: "2008 World Series Champions" },
+  { year: 2008, label: "2008 World Series", championship: true },
   { year: 2022, label: "2022 NL Pennant" },
 ];
 
@@ -26,6 +26,15 @@ export function initTimeline() {
     activeFilter = e.target.dataset.filter;
     render();
   });
+
+  // Sync sticky axis horizontal offset with wrapper scroll
+  const wrapper = document.getElementById('timeline-wrapper');
+  const axisInner = document.getElementById('timeline-axis-inner');
+  if (wrapper && axisInner) {
+    wrapper.addEventListener('scroll', () => {
+      axisInner.style.transform = `translateX(${-wrapper.scrollLeft}px)`;
+    }, { passive: true });
+  }
 }
 
 function decadeRangeForFilter(filter) {
@@ -67,7 +76,7 @@ function render() {
   const yearWidth = 100 / TOTAL_YEARS;
   const barHeight = 28;
   const barGap = 3;
-  const topOffset = 50;
+  const topPad = 36;
 
   // Build year axis
   let axisHTML = '';
@@ -77,12 +86,15 @@ function render() {
     axisHTML += `<div class="timeline-year-mark ${isDecade ? 'decade' : ''}" style="position:absolute;left:${left}%;width:${yearWidth}%">${isDecade ? y : (y % 5 === 0 ? "'" + String(y).slice(-2) : '')}</div>`;
   }
 
+  const rowsHeight = filtered.length * (barHeight + barGap);
+  const totalHeight = topPad + rowsHeight + 20;
+
   // Build milestone lines
   let milestonesHTML = milestones.map(m => {
     const left = ((m.year - START_YEAR) / TOTAL_YEARS) * 100;
-    const height = topOffset + filtered.length * (barHeight + barGap) + 20;
+    const cls = m.championship ? 'timeline-milestone championship' : 'timeline-milestone';
     return `
-      <div class="timeline-milestone" style="left:${left}%;top:${topOffset}px;height:${height - topOffset}px">
+      <div class="${cls}" style="left:${left}%;top:${topPad}px;height:${rowsHeight}px">
         <div class="timeline-milestone-label">${m.label}</div>
       </div>
     `;
@@ -96,7 +108,7 @@ function render() {
     return ranges.map(([start, end]) => {
       const left = ((start - START_YEAR) / TOTAL_YEARS) * 100;
       const width = ((end - start + 1) / TOTAL_YEARS) * 100;
-      const top = topOffset + i * (barHeight + barGap);
+      const top = topPad + i * (barHeight + barGap);
 
       return `<div class="timeline-player-bar ${typeClass}"
         style="left:${left}%;width:${width}%;top:${top}px"
@@ -105,11 +117,12 @@ function render() {
     }).join('');
   }).join('');
 
-  const totalHeight = topOffset + filtered.length * (barHeight + barGap) + 40;
+  // Sticky axis (outside the horizontally-scrolling wrapper)
+  const axisInner = document.getElementById('timeline-axis-inner');
+  if (axisInner) axisInner.innerHTML = axisHTML;
 
   container.innerHTML = `
-    <div style="position:relative;height:${topOffset}px">${axisHTML}</div>
-    <div style="position:relative;height:${totalHeight - topOffset}px;border-top:2px solid rgba(255,255,255,0.2)">
+    <div style="position:relative;height:${totalHeight}px">
       ${milestonesHTML}
       ${barsHTML}
     </div>

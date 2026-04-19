@@ -61,7 +61,8 @@
     <div class="container">
       <div class="section-header fade-in-up">
         <h2>WAR <span class="accent">Leaderboard</span></h2>
-        <p>Wins Above Replacement &mdash; the definitive measure of a player's total contribution</p>
+        <p><strong>Wins Above Replacement</strong> estimates how many extra wins a player gave the Phillies over a freely-available replacement-level player (think: a minor-league call-up or waiver-wire pickup). It rolls hitting, baserunning, fielding, and pitching into a single number &mdash; so a star shortstop and an ace starter can be compared on the same scale. As a rough guide: <strong>2 WAR</strong> is a solid starter, <strong>5 WAR</strong> is an All-Star, and <strong>8+ WAR</strong> is an MVP-caliber season.</p>
+        <p class="source-cite">All WAR values on this page use <strong>bWAR</strong>, sourced from <a href="https://www.baseball-reference.com/teams/PHI/leaders_bat.shtml" target="_blank" rel="noopener">Baseball-Reference's Phillies franchise leaders</a> (through the 2025 season).</p>
       </div>
       <div class="filter-bar" id="leaderboard-filters">
         <button class="filter-btn active" data-filter="all">All Players</button>
@@ -146,7 +147,16 @@
         <button class="filter-btn" data-filter="10s">10s</button>
         <button class="filter-btn" data-filter="20s">20s</button>
       </div>
-      <div class="timeline-wrapper">
+      <div class="timeline-legend">
+        <span class="timeline-legend-item"><span class="timeline-legend-swatch position"></span>Position Player</span>
+        <span class="timeline-legend-item"><span class="timeline-legend-swatch pitcher"></span>Pitcher</span>
+        <span class="timeline-legend-item"><span class="timeline-legend-swatch championship"></span>World Series Win</span>
+        <span class="timeline-legend-item"><span class="timeline-legend-swatch milestone"></span>Pennant / Era Marker</span>
+      </div>
+      <div class="timeline-axis-sticky" id="timeline-axis-sticky">
+        <div class="timeline-axis-inner" id="timeline-axis-inner"></div>
+      </div>
+      <div class="timeline-wrapper" id="timeline-wrapper">
         <div class="timeline-container" id="timeline-container"></div>
       </div>
     </div>
@@ -183,7 +193,8 @@
       <div class="rushmore-container fade-in-up">
         <div class="rushmore-slots" id="rushmore-slots"></div>
         <div class="rushmore-actions">
-          <button class="btn btn-primary" id="rushmore-share">Share Your Picks</button>
+          <button class="btn btn-primary" id="rushmore-download">Download as Mount Rushmore</button>
+          <button class="btn btn-secondary" id="rushmore-share">Share Your Picks</button>
           <button class="btn btn-secondary" id="rushmore-reset">Reset</button>
         </div>
       </div>

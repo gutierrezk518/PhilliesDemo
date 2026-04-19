@@ -66,7 +66,7 @@ function render() {
           <div class="card-face card-back">
             <h3>${p.player}</h3>
             <div class="radar-container">
-              <canvas class="radar-canvas" width="220" height="180"></canvas>
+              <canvas class="radar-canvas" width="160" height="110"></canvas>
             </div>
             <div class="stats-grid">
               ${isPitcher ? `
@@ -141,6 +141,7 @@ function createRadarChart(canvas, player) {
     options: {
       responsive: false,
       animation: { duration: 600 },
+      layout: { padding: { top: 10, bottom: 6, left: 14, right: 14 } },
       plugins: { legend: { display: false } },
       scales: {
         r: {
@@ -149,8 +150,9 @@ function createRadarChart(canvas, player) {
           ticks: { display: false, stepSize: 25 },
           grid: { color: 'rgba(0,45,114,0.15)' },
           pointLabels: {
-            font: { size: 10, weight: '600' },
-            color: '#002D72'
+            font: { size: 9, weight: '600' },
+            color: '#002D72',
+            padding: 4
           }
         }
       }

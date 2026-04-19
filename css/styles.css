@@ -180,6 +180,30 @@ section {
   font-weight: 400;
 }
 
+.section-header p.source-cite {
+  font-size: 0.85rem;
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 12px;
+  font-style: italic;
+}
+
+.section-header p.source-cite strong {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.section-header p.source-cite a {
+  color: var(--phillies-powder);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  opacity: 0.9;
+}
+
+.section-header p.source-cite a:hover {
+  color: #fff;
+  opacity: 1;
+}
+
 .section-header .accent { color: var(--phillies-red); }
 
 /* === HERO === */
@@ -484,13 +508,13 @@ section {
 /* === PLAYER CARDS === */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
 }
 
 .card-wrapper {
   perspective: 1000px;
-  height: 380px;
+  height: 280px;
 }
 
 .card {
@@ -508,8 +532,8 @@ section {
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 12px;
+  padding: 16px;
   overflow: hidden;
 }
 
@@ -526,15 +550,16 @@ section {
 
 .card-front .rank-badge {
   position: absolute;
-  top: 16px;
-  left: 16px;
-  width: 36px;
-  height: 36px;
+  top: 10px;
+  left: 10px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--phillies-red);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.8rem;
   font-weight: 800;
   font-size: 0.85rem;
 }
@@ -546,11 +571,11 @@ section {
 
 .card-front .type-badge {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.7rem;
+  top: 10px;
+  right: 10px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -567,52 +592,52 @@ section {
 }
 
 .card-front .player-img {
-  width: 100px;
-  height: 100px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  border: 3px solid rgba(255,255,255,0.2);
-  margin-bottom: 16px;
+  border: 2px solid rgba(255,255,255,0.2);
+  margin-bottom: 10px;
   object-fit: cover;
 }
 
 .card-front h3 {
   font-family: 'Oswald', sans-serif;
-  font-size: 1.45rem;
+  font-size: 1.1rem;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .card-front .position-text {
   color: var(--phillies-red);
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   letter-spacing: 1px;
   text-transform: uppercase;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .card-front .years-text {
   color: rgba(255,255,255,0.5);
-  font-size: 0.8rem;
-  margin-bottom: 16px;
+  font-size: 0.7rem;
+  margin-bottom: 10px;
 }
 
 .card-front .war-display {
   font-family: 'Oswald', sans-serif;
-  font-size: 2.75rem;
+  font-size: 2rem;
   font-weight: 700;
   color: var(--phillies-red);
   line-height: 1;
 }
 
 .card-front .war-label {
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
   letter-spacing: 2px;
   color: rgba(255,255,255,0.5);
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .card-back {
@@ -626,44 +651,56 @@ section {
 
 .card-back h3 {
   font-family: 'Oswald', sans-serif;
-  font-size: 1.2rem;
+  font-size: 0.85rem;
+  line-height: 1.1;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.3px;
   text-transform: uppercase;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
   color: var(--phillies-blue);
+  text-align: center;
+  flex-shrink: 0;
+  max-height: 2.2em;
+  overflow: hidden;
 }
 
 .card-back .radar-container {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  padding-top: 4px;
+}
+
+.card-back .radar-container canvas {
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .card-back .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-top: 12px;
+  gap: 5px;
+  margin-top: 8px;
 }
 
 .card-back .stat-item {
   text-align: center;
-  padding: 6px;
+  padding: 4px 2px;
   background: var(--phillies-gray);
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .card-back .stat-item .stat-val {
   font-weight: 800;
-  font-size: 1rem;
+  font-size: 0.82rem;
   color: var(--phillies-blue);
 }
 
 .card-back .stat-item .stat-key {
-  font-size: 0.65rem;
+  font-size: 0.55rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #666;
@@ -847,16 +884,81 @@ section {
 }
 
 /* === TIMELINE === */
+.timeline-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 22px;
+  margin: 0 0 20px;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.75);
+}
+
+.timeline-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.5px;
+}
+
+.timeline-legend-swatch {
+  width: 22px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.timeline-legend-swatch.position {
+  background: linear-gradient(90deg, var(--phillies-blue), var(--phillies-light-blue));
+}
+
+.timeline-legend-swatch.pitcher {
+  background: linear-gradient(90deg, var(--phillies-red-dark), var(--phillies-red));
+}
+
+.timeline-legend-swatch.championship {
+  background: linear-gradient(180deg, #FFD700, #FFA500);
+  width: 4px;
+  height: 18px;
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(255,215,0,0.8);
+}
+
+.timeline-legend-swatch.milestone {
+  background: var(--gold);
+  width: 2px;
+  height: 18px;
+  opacity: 0.55;
+}
+
+.timeline-axis-sticky {
+  position: sticky;
+  top: 58px;
+  z-index: 20;
+  background: var(--phillies-dark);
+  padding: 10px 0 6px;
+  border-bottom: 2px solid rgba(255,255,255,0.25);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.timeline-axis-inner {
+  min-width: 2400px;
+  position: relative;
+  height: 32px;
+  will-change: transform;
+}
+
 .timeline-wrapper {
   overflow-x: auto;
-  padding: 20px 0 40px;
+  padding: 0 0 40px;
   -webkit-overflow-scrolling: touch;
 }
 
 .timeline-container {
   min-width: 2400px;
   position: relative;
-  padding-top: 40px;
 }
 
 .timeline-axis {
@@ -932,18 +1034,37 @@ section {
   top: 0;
   width: 2px;
   background: var(--gold);
+  opacity: 0.45;
   z-index: 5;
+  pointer-events: none;
 }
 
 .timeline-milestone-label {
   position: absolute;
-  top: -28px;
+  top: -22px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.65rem;
-  color: var(--gold);
+  font-size: 0.62rem;
+  color: rgba(255,215,0,0.7);
   white-space: nowrap;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.timeline-milestone.championship {
+  width: 4px;
+  background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%);
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(255,215,0,0.85);
+}
+
+.timeline-milestone.championship .timeline-milestone-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #FFD700;
+  top: -32px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  letter-spacing: 0.5px;
 }
 
 .timeline-tooltip {
